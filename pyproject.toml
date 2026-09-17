@@ -1,0 +1,20 @@
+[project]
+name = "rl-robotics-journey"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "PiotrLubonski", email = "nyy9ftgs54@privaterelay.appleid.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "gymnasium[classic-control]>=1.3.0",
+    "numpy>=2.5.3",
+]
+
+[project.scripts]
+rl-robotics-journey = "rl_robotics_journey:main"
+
+[build-system]
+requires = ["uv_build>=0.12.15,<0.13.0"]
+build-backend = "uv_build"
