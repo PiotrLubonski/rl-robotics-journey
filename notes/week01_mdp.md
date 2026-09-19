@@ -2,11 +2,13 @@
 
 ## 1. Czym jest MDP i z czego się składa
 Markov Decision Process
-SADPR
+SAPR,y
 S - stany
 A - akcje
-P - 
+P - dynamika świata
 R - nagrody
+y-wspolczynnik dyskonta
+
 
 ## 2. Własność Markowa
 nie zawsze mamy pełny obraz sytuacji i stanu
