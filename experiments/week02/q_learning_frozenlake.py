@@ -3,8 +3,8 @@
 import gymnasium as gym
 import numpy as np
 
-N_EPISODES = 2000
-ALPHA = 0.8  # tempo uczenia
+N_EPISODES = 20000
+ALPHA = 0.1  # tempo uczenia
 GAMMA = 0.95  # dyskontowanie
 EPS_START = 1.0
 EPS_END = 0.05
@@ -73,7 +73,7 @@ def evaluate(env, q_table, n_episodes=100):
 
 
 def main():
-    env = gym.make("FrozenLake-v1", map_name="4x4", is_slippery=False)
+    env = gym.make("FrozenLake-v1", map_name="4x4", is_slippery=True)
     q_table = np.zeros((env.observation_space.n, env.action_space.n))
 
     train(env, q_table)
