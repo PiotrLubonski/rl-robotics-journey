@@ -1219,6 +1219,7 @@ source = { editable = "." }
 dependencies = [
     { name = "gymnasium", extra = ["box2d", "classic-control", "toy-text"] },
     { name = "numpy" },
+    { name = "pillow" },
     { name = "stable-baselines3", extra = ["extra"] },
 ]
 
@@ -1226,6 +1227,7 @@ dependencies = [
 requires-dist = [
     { name = "gymnasium", extras = ["box2d", "classic-control", "toy-text"], specifier = ">=1.3.0" },
     { name = "numpy", specifier = ">=2.5.3" },
+    { name = "pillow", specifier = ">=12.3.0" },
     { name = "stable-baselines3", extras = ["extra"], specifier = ">=2.3.0" },
 ]
 

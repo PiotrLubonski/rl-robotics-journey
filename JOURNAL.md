@@ -36,3 +36,29 @@ Tabela Q (wiersz = stan, kolumna = lewo/dol/prawo/gora):
  [0.    0.    0.    0.   ]]
 
 Skutecznosc po treningu: 17%
+
+## Tydzień 3
+
+### Tydzień 3 — PPO na LunarLander-v3
+- 500k kroków, 8 środowisk, seed 0
+- Trening (ep_rew_mean): ~132 | Ewaluacja (deterministic): 212,4 ± 74
+- ROZWIĄZANE (próg 200). Ląduje za każdym razem, bez przechyłów.
+- Różnica trening/ewaluacja: losowanie akcji w treningu + opóźnienie średniej ze 100 epizodów
+- ±74 to głównie różne warunki startowe (losowe pchnięcie, teren), nie pech
+- explained_variance ~idealna, lekki spadek pod koniec — krytyk goni zmieniającą się politykę
+
+### Tydzień 3, środa — eksperyment z gamma
+Hipoteza (napisana PRZED uruchomieniem):
+
+| gamma | horyzont 1/(1−γ) | przewidywany wynik ewaluacji | co będzie robił lądownik |
+|-------|------------------|------------------------------|--------------------------|
+| 0.999 |  1000            |      250                     | wyląduje precyzyjnie     |
+| 0.99  |   100            |      120                     |  będzie nad lądowiskiem  |
+| 0.9   |    10            |     80                       |    losowo będzie wisiał  |
+
+Dlaczego tak myślę: no bo potrzebujemy ok 200 kroków do lądowania, 1000 to jest wystarczajaca liczba az nadto. 100 to jest troche za malo. 10 to bardzo malo i bedziemy sie opierac na losowych ruchach
+
+## Checkpoint #1 — koniec tygodnia 3
+- Umiem:rozróźniać gamma
+- Sprawia mi trudność: czytanie tensorboarda
+- Co chcę poprawić w sposobie nauki: trochę więcej tłumaczenia pythona i praktyki z nim.
