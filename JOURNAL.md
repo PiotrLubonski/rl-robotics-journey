@@ -62,3 +62,27 @@ Dlaczego tak myślę: no bo potrzebujemy ok 200 kroków do lądowania, 1000 to j
 - Umiem:rozróźniać gamma
 - Sprawia mi trudność: czytanie tensorboarda
 - Co chcę poprawić w sposobie nauki: trochę więcej tłumaczenia pythona i praktyki z nim.
+
+## Tydzień 4, przykladowe liczby
+=== Pendulum-v1 ===
+obserwacja: Box([-1. -1. -8.], [1. 1. 8.], (3,), float32)
+akcja:      Box(-2.0, 2.0, (1,), float32)
+przykladowa akcja: [1.3106172]
+losowy agent: -1174.6 +/- 266.7
+epizody koncza sie przez: truncated
+
+=== Reacher-v5 ===
+obserwacja: Box(-inf, inf, (10,), float64)
+akcja:      Box(-1.0, 1.0, (2,), float32)
+przykladowa akcja: [-0.83242106 -0.79425025]
+losowy agent: -43.0 +/- 4.3
+epizody koncza sie przez: truncated
+
+### Tydzień 4 — SAC kontra PPO na Pendulum-v1 (2 seedy, domyślne hiperparametry)
+| Ustawienie | Średni wynik | Czas |
+|---|---|---|
+| SAC 20k | −132 | 4,3 min |
+| PPO 20k | −1248 (losowy poziom) | 0,3 min |
+| PPO 200k | −532 | 3,5 min |
+Wniosek: SAC ~25× lepiej wykorzystuje każde doświadczenie (bufor), kosztem ~12× więcej obliczeń na krok.
+Na prawdziwym robocie drogie są kroki, nie minuty → SAC.
