@@ -86,3 +86,17 @@ epizody koncza sie przez: truncated
 | PPO 200k | −532 | 3,5 min |
 Wniosek: SAC ~25× lepiej wykorzystuje każde doświadczenie (bufor), kosztem ~12× więcej obliczeń na krok.
 Na prawdziwym robocie drogie są kroki, nie minuty → SAC.
+
+### Tydzień 5
+=== HalfCheetah-v5 ===
+obserwacja: Box(-inf, inf, (17,), float64)
+akcja:      Box(-1.0, 1.0, (6,), float32)
+przykladowa akcja: [-0.8027939  -0.09275231 -0.33667022  0.33393055  0.89608324  0.41529486]
+losowy agent: -281.4 +/- 67.9
+epizody koncza sie przez: truncated
+
+### Tydzień 5, poniedziałek — PPO na HalfCheetah-v5 (domyślne ustawienia)
+- 1M kroków, seed 0, 19,7 min → 1597,7 ± 45,7 (ok. 2 m/s)
+- Biegnie na nogach, głową do przodu, ale szarpie.
+- Powód: nagroda nie mówi nic o płynności → sterowanie „wszystko albo nic".
+- Na prawdziwym robocie trzeba by dodać karę za gwałtowne zmiany akcji.

@@ -1,6 +1,7 @@
 """Obejrzyj wybrany model z eksperymentu."""
 
 import argparse
+import pickle
 
 import gymnasium as gym
 from stable_baselines3 import PPO, SAC
@@ -14,16 +15,22 @@ def main():
     parser.add_argument("--algo", choices=list(ALGOS), default="ppo")
     parser.add_argument("--env", default="LunarLander-v3")
     parser.add_argument("--episodes", type=int, default=3)
+    parser.add_argument("--vecnorm", default=None, help="plik .pkl ze statystykami normalizacji")
     args = parser.parse_args()
 
     model = ALGOS[args.algo].load(args.model)  # nazwa -> klasa -> load
+    vecnorm = None
+    if args.vecnorm:
+        with open(args.vecnorm, "rb") as f:
+            vecnorm = pickle.load(f)
     env = gym.make(args.env, render_mode="human")
 
     for ep in range(args.episodes):
         obs, info = env.reset()
         total, steps = 0.0, 0
         while True:
-            action, _ = model.predict(obs, deterministic=True)
+            model_obs = vecnorm.normalize_obs(obs) if vecnorm else obs
+            action, _ = model.predict(model_obs, deterministic=True)
             obs, reward, terminated, truncated, info = env.step(action)
             total += reward
             steps += 1

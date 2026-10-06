@@ -42,4 +42,5 @@ def show_random(env_id, episodes=3):
 if __name__ == "__main__":
     describe("Pendulum-v1")
     describe("Reacher-v5")
+    describe("HalfCheetah-v5")
     show_random("Reacher-v5")
