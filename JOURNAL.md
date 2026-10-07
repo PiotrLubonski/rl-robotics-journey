@@ -100,3 +100,9 @@ epizody koncza sie przez: truncated
 - Biegnie na nogach, głową do przodu, ale szarpie.
 - Powód: nagroda nie mówi nic o płynności → sterowanie „wszystko albo nic".
 - Na prawdziwym robocie trzeba by dodać karę za gwałtowne zmiany akcji.
+
+Wynik: 5385.0 ± 2458.8 (39.4 min). Zoo (v3, 150 ep.): 5819 ± 664.
+- Wynik: potwierdzona (≥ 1800), ale niedoszacowana ~2,7×.
+- Szarpanie: stary __% → nowy __%.
+Wniosek: ten sam algorytm i kroki, inne ustawienia → 3,4× lepiej.
+Ale rozrzut między epizodami ponad 50× większy (46 → 2459).
