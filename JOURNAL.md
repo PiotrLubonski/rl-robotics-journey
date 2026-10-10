@@ -106,3 +106,37 @@ Wynik: 5385.0 ± 2458.8 (39.4 min). Zoo (v3, 150 ep.): 5819 ± 664.
 - Szarpanie: stary __% → nowy __%.
 Wniosek: ten sam algorytm i kroki, inne ustawienia → 3,4× lepiej.
 Ale rozrzut między epizodami ponad 50× większy (46 → 2459).
+
+## 2026-10-10 — Ktore ustawienie Zoo robi roznice? (HalfCheetah-v5, 1M, seed 0)
+| Wariant            | Udane (pkt) | Przewrotki | Dlaczego |
+|--------------------|-------------|------------|----------|
+| domyslne (mamy)    | 1585        | 0%         | —        |
+| tylko normalizacja | 4000          | 10%        | bo liczby sa znormalizowane wiec akcje sa bardziej lagodne i plynne i ostrozniejsze wiec przewrotek jest mniej i w efekcie wolniej ale dojdziemy do lepszego wyniku        |
+| tylko sigma 0,14   | 3000          | 15%         | mniej losuje wiec rzadziej wypadnie mu akcja w kierunku przewrotki ale moze miec problemy z dojsciem do celu       |
+| pelne Zoo (mamy)   | 6465        | 30%        | —        |
+Wynik: ppo_norm1_logstd0.0_seed0: srednia 1729.6, porazki 0%, udane 1729.6 (20.7 min) ppo_norm0_logstd-2.0_seed0: srednia 1094.0, porazki 42%, udane 1384.9 (19.9 min)
+Wniosek:pojedyncze parametry nic nie daja trzeba sprobowac ich razem
+
+Wynik (50 epizodow, te same starty):
+| Wariant            | Udane | Przewrotki | Hipoteza   |
+|--------------------|-------|------------|------------|
+| domyslne           | 1585  | 0%         | —          |
+| tylko normalizacja | 1730  | 0%         | 4000 / 10% |
+| tylko sigma 0,14   | 1385  | 42%        | 3000 / 15% |
+| pelne Zoo          | 6465  | 30%        | —          |
+Hipoteza: obalona (wyniki duzo nizsze), ale kolejnosc trafiona.
+Wniosek (wlasnymi slowami): ...
+
+### Hipoteza: normalizacja + sigma 0,14 razem
+Udane: 2500  Przewrotki: 10%   Dlaczego: normalizacja ulatwi prace gamma przez to wyniki beda lepsze
+
+### Wynik: normalizacja + sigma 0,14
+| Wariant               | Udane | Slabe (<1000) | Co widac                      |
+|-----------------------|-------|---------------|-------------------------------|
+| domyslne              | 1585  | 0%            | biega, szarpie                |
+| tylko normalizacja    | 1730  | 0%            | prawie jak domyslne           |
+| tylko sigma 0,14      | 1385  | 42%           | chodzi, bez przewrotek        |
+| normalizacja + sigma  | 4567  | 0%            | biega                         |
+| pelne Zoo             | 6465  | 30%           | najszybszy, przewrotki        |
+Hipoteza (2500 / 10%): kierunek trafiony (interakcja), wielkosc niedoszacowana.
+Wniosek (wlasnymi slowami): razem te dwa parametry dzialaja bardzo dobrze, nie ma sensu zmieniac innych

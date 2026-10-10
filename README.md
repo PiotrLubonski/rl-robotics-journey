@@ -45,3 +45,21 @@ src/           reusable code (custom environment coming in week 8)
 media/         GIFs for this README
 JOURNAL.md     learning log (in Polish)
 ```
+
+### Week 5 — What makes tuned PPO work on HalfCheetah?
+
+Same algorithm (PPO), same budget (1M steps), seed 0, same 50 evaluation episodes.
+"Weak" = episode return < 1000.
+
+| Variant | Mean of good runs | Weak runs |
+|---|---|---|
+| SB3 defaults | 1585 | 0% |
+| + obs/reward normalization only | 1730 | 0% |
+| + log_std_init = -2 only | 1385 | 42% (slow walking, no flips) |
+| + both | 4567 | 0% |
+| Full RL Zoo config (10 changes) | 6465 | 30% (flips onto its back) |
+
+Takeaways:
+- Each setting alone barely helps (or hurts); together they triple the score. An interaction, not a sum.
+- The full Zoo config runs faster but flips in ~1/3 of episodes; the two-setting version never flipped. Speed vs. reliability.
+- 10 evaluation episodes overestimated the Zoo model (5385 vs 4699 on 50). Single seed per variant, so results are preliminary.
