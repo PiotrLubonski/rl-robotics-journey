@@ -172,3 +172,8 @@ Z kara 2764, 0% na plecach, 0 wolnych.
 Hipoteza: mechanizm trafiony, kierunek sredniej odwrotny (przewidzialem spadek, jest +74%).
 Wniosek: kara wypchnela geparda z pulapki (lokalne optimum). Bieg na nogach jest lepszy
 nawet wedlug oryginalnej nagrody, tylko PPO samo do niego nie dochodzilo.
+
+Weryfikacja: na podgladzie wydawalo sie "brzuch do gory", ale debug_angle:
+kat -38..+70°, koniec ~0°, 0% krokow do gory nogami → biega na nogach.
+Mocno kolysze tulowiem (do ~70°, Zoo tylko ~20°) → to pewnie "troche szarpie".
+Sama normalizacja (tydz. 5): 1730 pkt, 100% na plecach.
