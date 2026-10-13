@@ -140,3 +140,35 @@ Udane: 2500  Przewrotki: 10%   Dlaczego: normalizacja ulatwi prace gamma przez t
 | pelne Zoo             | 6465  | 30%           | najszybszy, przewrotki        |
 Hipoteza (2500 / 10%): kierunek trafiony (interakcja), wielkosc niedoszacowana.
 Wniosek (wlasnymi slowami): razem te dwa parametry dzialaja bardzo dobrze, nie ma sensu zmieniac innych
+
+## 2026-10-12 — Prawdziwy licznik przewrotek (cos(kat) < 0 przez 1 s)
+Stara miara: "porazka" = wynik < 1000.
+| Model              | Stara miara | Przewrotki (hipoteza) | Przewrotki (wynik) |
+|--------------------|-------------|-----------------------|--------------------|
+| domyslne           | 0%          | brak                     |                    |
+| tylko sigma 0,14   | 42%         | wolnoo chodzi                     |                    |
+| normalizacja+sigma | 0%          | brak, dobrze chodzi                   |                    |
+| pelne Zoo          | 30%         | przewrotki                     |                    |
+
+### Sprawdzian nie przeszedl: domyslny 100% przewrotek, Zoo 0%
+Moja hipoteza: winny jest B (nasz pewnik) — bo czasami jak ogladalem zachowanie geparda to wydawalo mi sie nietypowe a wyniki bylo ok
+Domyslny gepard, kat na koncu epizodu: ok. 0 stopni
+Slaby bieg Zoo, kat na koncu epizodu: ok. 90 stopni
+
+Wynik: winny B. Domyslny gepard biega NA PLECACH (kat ~190°, 89–99% krokow do gory nogami).
+Slabe biegi Zoo: nie na plecach, tylko utkniety przechylony ~50° (max 57°), ok. 570 pkt.
+Wrapper mierzyl dobrze. Bledny byl nasz "pewnik". Maly rozrzut ≠ dobre zachowanie.
+
+## 2026-10-13 — Kara za przechylenie tulowia (domyslne PPO, 1M, seed 0)
+Kara: weight * (cos(kat) - 1) → 0 poziomo, -1 przy 90°, -2 na plecach
+| Wariant        | Srednia (pkt) | Na plecach | Wolne (<1000) |
+|----------------|---------------|------------|---------------|
+| bez kary (0)   | 1500          | 3000          | 600             |
+| z kara (1)     |     1200         | 400      | 600           |
+Dlaczego: teraz epizody na plecach beda znacznie nizsze bo beda karane ale srednia mocno nie spadnie bo model nausczy sie w koncu prawidlowo chodzic
+
+Wynik: bez kary 1585, 100% na plecach (kontrola = wynik z tyg. 5 co do przecinka).
+Z kara 2764, 0% na plecach, 0 wolnych.
+Hipoteza: mechanizm trafiony, kierunek sredniej odwrotny (przewidzialem spadek, jest +74%).
+Wniosek: kara wypchnela geparda z pulapki (lokalne optimum). Bieg na nogach jest lepszy
+nawet wedlug oryginalnej nagrody, tylko PPO samo do niego nie dochodzilo.
