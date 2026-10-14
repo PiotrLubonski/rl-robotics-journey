@@ -131,3 +131,21 @@ Evaluation uses the original reward.
 The penalty did more than forbid a behavior: it pushed the agent out of a local optimum.
 Upright running scores 74% higher even on the original reward. Single seed, so preliminary.
 The new gait still pitches the torso a lot (up to ~70°, vs ~20° for the Zoo policy).
+
+#### Smoothness penalty (action-rate penalty)
+
+Added on top of the posture penalty during training: `smooth * sum((a_t - a_{t-1})^2)` over the 6 joints.
+Jerk = mean |a_t − a_{t−1}| per joint (0 = smooth, 2 = jumping between −1 and +1 every step).
+Return over 50 episodes; jerk and saturation over 10 episodes.
+
+| smooth | Mean return | Jerk | Saturated actions | On its back | Final policy std |
+|---|---|---|---|---|---|
+| 0 | 2764 | 0.853 | 44% | 0% | 0.22 |
+| 0.1 | 1383 | 0.575 | 32% | 44% | 0.21 |
+| 0.3 | 1728 | 0.459 | 14% | 4% | 0.13 |
+| reference: normalization + log_std_init = -2, no penalties | 4567 | 0.499 | 8% | 0% | — |
+
+The penalty reduced jerk, but at a large cost in speed. At smooth = 0.3 the exploration noise collapsed much faster:
+penalizing action changes also penalizes random exploration. The smoothest *and* fastest policy came from fixing
+the cause (small initial std + normalization), not from penalizing the symptom.
+Single seed; the 44% flips at smooth = 0.1 are not explained yet.

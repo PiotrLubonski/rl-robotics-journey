@@ -177,3 +177,29 @@ Weryfikacja: na podgladzie wydawalo sie "brzuch do gory", ale debug_angle:
 kat -38..+70°, koniec ~0°, 0% krokow do gory nogami → biega na nogach.
 Mocno kolysze tulowiem (do ~70°, Zoo tylko ~20°) → to pewnie "troche szarpie".
 Sama normalizacja (tydz. 5): 1730 pkt, 100% na plecach.
+
+## 2026-10-14 — Pomiar szarpania (10 epizodow, te same starty)
+| Model                  | Kolysanie (st.) | Szarpanie (0-2) | Saturacja (%) |
+|------------------------|-----------------|-----------------|---------------|
+| bez kary (na plecach)  |       mocno          |       1          |     60%         |
+| z kara (na nogach)     |       średnio          |       0          |     5%          |
+| normalizacja + sigma   |          mało       |         1        |     10%          |
+| pelne Zoo              |         dużo        |         2        |     70%          |
+Hipoteza: najbardziej szarpie pelne zoo, najmniej z kara, bo pelne zoo idzie po "trupach do celu"
+
+## 2026-10-14 — Kara za szarpanie (upright 1.0 + smooth, 1M, seed 0)
+Kara: smooth * suma((a_t - a_{t-1})^2) po 6 stawach
+| smooth    | Punkty | Szarpanie | Saturacja | Kolysanie | Na plecach |
+|-----------|--------|-----------|-----------|-----------|------------|
+| 0 (mamy)  | 2724   | 0.853     | 44%       | 16.7      | 0%         |
+| 0.1       | 3000      | 0.5         | 30%         | 10         | 0%          |
+| 0.3       | 4000     | 0.2         | 50%         | 5         | 0%          |
+Dlaczego: im bardziej wygladzimy z pomoca smooth tym szarpanie sie zmniejszyi inne parametry tez. przy czym wydaje mi sie ze jak za duzo wygladzimy to saturacja moze zaczac wzrastac.
+### Test mechanizmu: czy kara za szarpanie zabija ciekawosc?
+Prognoza: sigma (train/std) spadnie najszybciej przy smooth = 0.3
+
+Wynik: kara za szarpanie dziala na szarpanie (0.853 → 0.575 → 0.459), saturacja 44 → 32 → 14%,
+ale punkty spadly (2764 → 1383 / 1728), a przy 0.1 wrocilo lezenie na plecach (44%).
+Test mechanizmu (train/std): przy 0.3 sigma spadla duzo szybciej (0.13 na koncu, kontrola 0.22) → kara zgasila ciekawosc.
+Przy 0.1 sigma prawie jak w kontroli, a mimo to 44% na plecach → niewyjasnione, moze przypadek seeda.
+Wniosek: najplynniejszy i najszybszy gepard to normalizacja + mala sigma BEZ kar. Lecz przyczyne, nie objaw.
