@@ -203,3 +203,10 @@ ale punkty spadly (2764 → 1383 / 1728), a przy 0.1 wrocilo lezenie na plecach 
 Test mechanizmu (train/std): przy 0.3 sigma spadla duzo szybciej (0.13 na koncu, kontrola 0.22) → kara zgasila ciekawosc.
 Przy 0.1 sigma prawie jak w kontroli, a mimo to 44% na plecach → niewyjasnione, moze przypadek seeda.
 Wniosek: najplynniejszy i najszybszy gepard to normalizacja + mala sigma BEZ kar. Lecz przyczyne, nie objaw.
+
+## 2026-10-15 — Testy wrapperow (pytest + atrapa srodowiska)
+17 testow zielonych. Atrapa FakeCheetah: sami ustawiamy kat, bez fizyki → szybko i przewidywalnie.
+Psucie 1: warunek "kat > 90°" zamiast cos → pada test pelnego obrotu (360°).
+Dopisalem test dla -180° (naiwna wersja go nie widzi, cos widzi).
+Psucie 2: bez czyszczenia prev_action w reset → pada test resetu
+(kara 2.4 za "szarpniecie" z poprzedniego epizodu).

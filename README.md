@@ -34,6 +34,8 @@ The difference between γ = 0.999 and γ = 0.99 is within seed-to-seed variance;
 uv sync
 uv run python experiments/week03/ppo_lunar.py
 uv run python experiments/week03/watch.py runs/week03_ppo_lunar/ppo_lunar
+Run the tests (17 tests; the reward wrappers are tested on a fake environment, no physics needed):
+uv run pytest -v
 ```
 
 ## Repository layout
