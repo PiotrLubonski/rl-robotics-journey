@@ -210,3 +210,13 @@ Psucie 1: warunek "kat > 90°" zamiast cos → pada test pelnego obrotu (360°).
 Dopisalem test dla -180° (naiwna wersja go nie widzi, cos widzi).
 Psucie 2: bez czyszczenia prev_action w reset → pada test resetu
 (kara 2.4 za "szarpniecie" z poprzedniego epizodu).
+
+## 2026-10-19 — Tydzien 7: srodowisko z celami (FetchReach)
+Losowy agent trafi w cel w ok. 30% epizodow, srednia odleglosc na koncu ok. 4 cm.
+Dlaczego: no najpierw nauczy sie siegac cokolwiek, zajmie mo to 2/3 epizodow i dostanie za to nagrody az w koncu zacznie trafiac do celu wlasciwego blisko tolerancji celu.
+
+Wynik: losowy agent 4% sukcesow (2/50), srednio 23.4 cm od celu (prog: 5 cm).
+Hipoteza nietrafiona: losowy agent sie nie uczy, to punkt zero.
+Moje "najpierw nauczy sie siegac cokolwiek" = idea HER. Bez HER nagroda za
+"cokolwiek" to -1, tak samo jak za nic. compute_reward: prawdziwy cel -1,
+cel = miejsce koncowe 0 → porazka staje sie sukcesem dla innego celu.
