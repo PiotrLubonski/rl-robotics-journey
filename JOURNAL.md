@@ -220,3 +220,17 @@ Hipoteza nietrafiona: losowy agent sie nie uczy, to punkt zero.
 Moje "najpierw nauczy sie siegac cokolwiek" = idea HER. Bez HER nagroda za
 "cokolwiek" to -1, tak samo jak za nic. compute_reward: prawdziwy cel -1,
 cel = miejsce koncowe 0 → porazka staje sie sukcesem dla innego celu.
+
+## 2026-10-20 — SAC bez HER kontra SAC z HER (FetchReach, 20k krokow, seed 0)
+| Wariant       | Sukces | Odleglosc na koncu |
+|---------------|--------|--------------------|
+| losowy (mamy) | 4%     | 23.4 cm            |
+| SAC bez HER   | 30%      | 4 cm               |
+| SAC z HER     | 60%    | 3 cm                 |
+Dlaczego: mamy malo epizodow, sac uczy sie szybko ale mimo wszystko to za malo. HER mu pomoze tymi trafieniami na slepo jescze szybciej dotrzec do celu
+
+Wynik: SAC bez HER 94%, 2.8 cm; SAC z HER 100%, 1.2 cm (po ok. 8 min kazdy).
+Hipoteza: kierunek trafiony, wielkosc mocno niedoszacowana.
+Wniosek: FetchReach jest latwy (4% losowych trafien wystarcza na start),
+HER daje szybszy start i 2x lepsza precyzje. HER pomaga tym bardziej,
+im rzadsze losowe trafienia. Krzywa nie moze ruszyc przed learning_starts=1000.
