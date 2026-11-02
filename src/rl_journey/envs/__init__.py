@@ -1,0 +1,1 @@
+"""Środowiska Gymnasium z kursu."""

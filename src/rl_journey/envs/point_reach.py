@@ -40,8 +40,7 @@ class PointReach(gym.Env):
         return self._obs(), {}
 
     def compute_reward(self, achieved_goal, desired_goal, info):
-        # dziala dla jednego punktu (2,) i dla paczki (n, 2): HER wola to z paczka!
-        dist = np.linalg.norm(achieved_goal - desired_goal)
+        dist = np.linalg.norm(achieved_goal - desired_goal, axis=-1)
         return -(dist > self.threshold).astype(np.float32)
 
     def step(self, action):

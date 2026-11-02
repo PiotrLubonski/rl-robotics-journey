@@ -9,7 +9,7 @@ from pathlib import Path
 import gymnasium as gym
 import gymnasium_robotics
 import numpy as np
-from point_reach import PointReach
+from rl_journey.envs.point_reach import PointReach
 from stable_baselines3 import SAC, HerReplayBuffer
 
 gym.register_envs(gymnasium_robotics)

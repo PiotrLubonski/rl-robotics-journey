@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from arm_reach import ArmReach, wrap_angle
+from rl_journey.envs.arm_reach import ArmReach, wrap_angle
 
 
 @pytest.mark.parametrize(

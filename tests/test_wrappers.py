@@ -7,7 +7,7 @@ w ktorym sami ustawiamy kat tulowia. Testy sa szybkie i przewidywalne.
 import gymnasium as gym
 import numpy as np
 import pytest
-from wrappers import FlipMonitor, SmoothActionReward, UprightReward
+from rl_journey.wrappers import FlipMonitor, SmoothActionReward, UprightReward
 
 # ---------- ATRAPA ----------
 

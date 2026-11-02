@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from rl_core import ppo_updates, q_update, smooth_penalty, td_target
+from rl_journey.core import ppo_updates, q_update, smooth_penalty, td_target
 
 
 def test_cel_na_koncu_epizodu_to_sama_nagroda():

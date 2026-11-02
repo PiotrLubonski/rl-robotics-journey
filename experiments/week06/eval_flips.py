@@ -6,7 +6,7 @@ import numpy as np
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import VecNormalize
-from wrappers import FlipMonitor
+from rl_journey.wrappers import FlipMonitor
 
 parser = argparse.ArgumentParser()
 parser.add_argument("model", help="sciezka do modelu, bez .zip")

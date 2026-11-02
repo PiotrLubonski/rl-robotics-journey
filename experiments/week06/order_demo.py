@@ -3,7 +3,7 @@
 import gymnasium as gym
 import numpy as np
 from stable_baselines3.common.monitor import Monitor
-from wrappers import UprightReward
+from rl_journey.wrappers import UprightReward
 
 
 class FakeData:

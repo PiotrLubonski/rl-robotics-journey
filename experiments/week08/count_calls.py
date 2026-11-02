@@ -2,7 +2,7 @@
 
 import argparse
 
-from arm_reach import ArmReach
+from rl_journey.envs.arm_reach import ArmReach
 from stable_baselines3 import SAC
 
 parser = argparse.ArgumentParser()

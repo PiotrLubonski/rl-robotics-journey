@@ -1,7 +1,7 @@
 """Testy PointReach. Najwazniejsze: compute_reward dla paczki, bo tak wola go HER."""
 
 import numpy as np
-from point_reach import PointReach
+from rl_journey.envs.point_reach import PointReach
 
 
 def test_nagroda_dla_jednego_punktu():

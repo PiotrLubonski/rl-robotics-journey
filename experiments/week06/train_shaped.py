@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_util import make_vec_env
-from wrappers import FlipMonitor, make_shaped
+from rl_journey.wrappers import FlipMonitor, make_shaped
 
 RUN = Path("runs/week06")
 RESULTS = RUN / "results_smooth.csv"

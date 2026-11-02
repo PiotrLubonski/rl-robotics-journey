@@ -19,8 +19,11 @@ dependencies = [
 rl-robotics-journey = "rl_robotics_journey:main"
 
 [build-system]
-requires = ["uv_build>=0.12.15,<0.13.0"]
-build-backend = "uv_build"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rl_journey"]
 
 [dependency-groups]
 dev = [
@@ -28,5 +31,4 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-pythonpath = [".", "experiments/week06", "experiments/week07", "experiments/week08"]
 testpaths = ["tests"]

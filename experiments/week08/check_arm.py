@@ -1,4 +1,4 @@
-from arm_reach import ArmReach
+from rl_journey.envs.arm_reach import ArmReach
 from gymnasium.utils.env_checker import check_env
 
 for mode in ["cossin", "raw"]:

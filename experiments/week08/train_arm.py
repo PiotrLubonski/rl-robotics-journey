@@ -6,7 +6,7 @@ import time
 from pathlib import Path
 
 import numpy as np
-from arm_reach import ArmReach
+from rl_journey.envs.arm_reach import ArmReach
 from stable_baselines3 import SAC
 from stable_baselines3.common.monitor import Monitor
 
