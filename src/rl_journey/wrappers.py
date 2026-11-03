@@ -79,3 +79,17 @@ def make_shaped(env, upright=1.0, smooth=0.0):
     env = UprightReward(env, weight=upright)
     env = SmoothActionReward(env, weight=smooth)
     return env
+
+
+class SuccessBonus(gym.Wrapper):
+    """Dodaje premię w każdym kroku, w którym końcówka jest w progu."""
+
+    def __init__(self, env, bonus=1.0):
+        super().__init__(env)
+        self.bonus = bonus
+
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        bonus = self.bonus * info.get("is_success", 0.0)
+        info["success_bonus"] = bonus
+        return obs, reward + bonus, terminated, truncated, info
