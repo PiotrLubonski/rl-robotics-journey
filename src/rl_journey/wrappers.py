@@ -1,5 +1,7 @@
 """Wrappery do HalfCheetah."""
 
+from collections import deque
+
 import gymnasium as gym
 import numpy as np
 
@@ -93,3 +95,32 @@ class SuccessBonus(gym.Wrapper):
         bonus = self.bonus * info.get("is_success", 0.0)
         info["success_bonus"] = bonus
         return obs, reward + bonus, terminated, truncated, info
+
+
+class StackObs(gym.Wrapper):
+    """Obserwacja = n ostatnich obserwacji sklejonych w jedną (najstarsza pierwsza)."""
+
+    def __init__(self, env, n=2):
+        super().__init__(env)
+        self.n = n
+        size = env.observation_space.shape[0] * n
+        self.observation_space = gym.spaces.Box(
+            -np.inf, np.inf, shape=(size,), dtype=np.float32
+        )
+        self.frames = deque(
+            maxlen=n
+        )  # taśma na n klatek: nowa wchodzi, najstarsza wypada
+
+    def reset(self, **kwargs):
+        obs, info = self.env.reset(**kwargs)
+        for _ in range(self.n):  # na starcie cała taśma = pierwsza klatka
+            self.frames.append(obs)
+        return self._stacked(), info
+
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        self.frames.append(obs)
+        return self._stacked(), reward, terminated, truncated, info
+
+    def _stacked(self):
+        return np.concatenate(self.frames).astype(np.float32)
