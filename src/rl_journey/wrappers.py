@@ -124,3 +124,70 @@ class StackObs(gym.Wrapper):
 
     def _stacked(self):
         return np.concatenate(self.frames).astype(np.float32)
+
+
+class RandomizePhysics(gym.Wrapper):
+    """Przy każdym resecie losuje fizykę ramienia: długości, tarcie, siłę silnika."""
+
+    def __init__(
+        self,
+        env,
+        link_scale=(0.9, 1.1),
+        damping_scale=(0.5, 2.0),
+        gain_scale=(0.7, 1.3),
+    ):
+        super().__init__(env)
+        self.link_scale = link_scale
+        self.damping_scale = damping_scale
+        self.gain_scale = gain_scale
+        arm = env.unwrapped
+        self.nominal = {
+            "l1": arm.l1,
+            "l2": arm.l2,
+            "damping": arm.damping,
+            "gain": arm.gain,
+        }
+        self.rng = np.random.default_rng()
+
+    def reset(self, seed=None, options=None):
+        if seed is not None:
+            self.rng = np.random.default_rng(
+                seed + 1_000_000
+            )  # osobny strumień losowości
+        arm = self.env.unwrapped
+        arm.l1 = self.nominal["l1"] * self.rng.uniform(*self.link_scale)
+        arm.l2 = self.nominal["l2"] * self.rng.uniform(*self.link_scale)
+        arm.damping = self.nominal["damping"] * self.rng.uniform(*self.damping_scale)
+        arm.gain = self.nominal["gain"] * self.rng.uniform(*self.gain_scale)
+        obs, info = self.env.reset(
+            seed=seed, options=options
+        )  # dopiero teraz: obserwacja z nową fizyką
+        info["physics"] = {
+            "l1": arm.l1,
+            "l2": arm.l2,
+            "damping": arm.damping,
+            "gain": arm.gain,
+        }
+        return obs, info
+
+
+class ObsNoise(gym.Wrapper):
+    """Dodaje szum gaussowski do obserwacji (czujniki nie są idealne). Nagroda bez zmian."""
+
+    def __init__(self, env, std=0.02):
+        super().__init__(env)
+        self.std = std
+        self.rng = np.random.default_rng()
+
+    def _noisy(self, obs):
+        return (obs + self.rng.normal(0.0, self.std, size=obs.shape)).astype(np.float32)
+
+    def reset(self, seed=None, options=None):
+        if seed is not None:
+            self.rng = np.random.default_rng(seed + 2_000_000)
+        obs, info = self.env.reset(seed=seed, options=options)
+        return self._noisy(obs), info
+
+    def step(self, action):
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        return self._noisy(obs), reward, terminated, truncated, info
