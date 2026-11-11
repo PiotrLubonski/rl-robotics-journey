@@ -151,3 +151,89 @@ The penalty reduced jerk, but at a large cost in speed. At smooth = 0.3 the expl
 penalizing action changes also penalizes random exploration. The smoothest *and* fastest policy came from fixing
 the cause (small initial std + normalization), not from penalizing the symptom.
 Single seed; the 44% flips at smooth = 0.1 are not explained yet.
+
+### Week 7 — Goal-conditioned RL and HER
+
+Sparse reward: 0 within the threshold of the goal, −1 otherwise. SAC with and without
+Hindsight Experience Replay (same code, only the replay buffer differs), 20k steps, seed 0,
+50 evaluation episodes.
+
+| Environment | Random agent | SAC | SAC + HER |
+|---|---|---|---|
+| FetchReach (5 cm threshold) | 4% | 94% | 100% |
+| PointReach, my own env (threshold 0.05) | 0% | 4% | 100% |
+
+HER matters most when random successes are rare. On FetchReach, 4% random hits were enough
+for SAC to bootstrap. On PointReach, with 0% random hits, SAC without HER learned nothing,
+while SAC + HER solved the task in the same 6.5 minutes.
+`compute_reward` must work on batches (HER relabels whole batches at once); a test guards it.
+
+## Tygodnie 8–9: ArmReach, własne ramię od zera
+
+Własne środowisko Gymnasium: ramię z dwoma stawami (0,5 m + 0,5 m) na płaszczyźnie ma dotknąć celu końcówką.
+Akcja to siła w stawach (−1…1), obserwacja to 10 liczb (cos i sin kątów, prędkości, cel, wektor końcówka→cel),
+nagroda to −odległość − 0,01·Σa². Sukces: końcówka bliżej niż 5 cm na końcu epizodu (100 kroków).
+Kod jest pakietem Pythona (`rl_journey`, `gym.make("rl_journey:ArmReach-v0")`), 59 testów pytest uruchamia CI przy każdym pushu.
+
+Wszystkie wyniki: SAC, 1 seed treningu, ocena na 200 epizodach (seedy 1000+), chyba że napisano inaczej.
+
+### Uczenie i punkt odniesienia
+
+| Wariant | Sukces | Kraniec zasięgu (cele 0,80–0,91 m) |
+|---|---|---|
+| losowy agent | 0% (dotknął choć raz: 8%) | |
+| SAC, 30 tys. kroków | 50% (50 epizodów) | |
+| SAC, 50 tys. kroków | 65,0% | 20,8% (5 z 24) |
+| SAC, 100 tys. kroków | 69,5% | 29,2% (7 z 24) |
+| ręczny regulator (jakobian + hamowanie, bez uczenia) | 100,0% | 100% (24 z 24) |
+
+### Co widzi ramię (50 tys. kroków)
+
+| Obserwacja | Sukces |
+|---|---|
+| z prędkością | 65,0% |
+| bez prędkości | 3,5% |
+| bez prędkości, 2 ostatnie klatki | 19,0% |
+| bez prędkości, 4 ostatnie klatki | 13,0% |
+
+### Nagroda (50 tys. kroków)
+
+| Nagroda | Sukces |
+|---|---|
+| −odległość | 65,0% |
+| −odległość + premia +1 za każdy krok w progu 5 cm | 60,5% |
+
+### Odporność na zmiany świata
+
+![Odporność](docs/img/week09_robustness.png)
+
+| Model | nominalny | długości ±10% | tarcie ×0,5–2 | silnik ±30% | szum 2 cm | wszystko naraz |
+|---|---|---|---|---|---|---|
+| ręczny regulator | 100,0% | 100,0% | 99,5% | 100,0% | 100,0% | 99,0% |
+| SAC | 65,0% | 60,5% | 65,0% | 65,0% | 67,5% | 63,5% |
+| SAC + losowa fizyka | 56,5% | 49,5% | 56,5% | 56,5% | 55,5% | 50,0% |
+| SAC + losowa fizyka + szum | 33,5% | 34,0% | 34,5% | 33,0% | 35,0% | 33,5% |
+
+### Wnioski
+
+1. **Granica jest w treningu, nie w zadaniu.** Ręczny regulator, który zna fizykę ramienia, ma 100% (co najmniej 99% w każdym zmienionym świecie i 24 z 24 na krańcu zasięgu). SAC uczy się tego samego z prób i po 100 tys. kroków ma 69,5%, a na krańcu zasięgu 29,2%.
+2. **Prędkość w obserwacji decyduje.** Bez niej ramię dotyka celu, ale nie umie się zatrzymać (3,5%). Pamięć dwóch klatek odzyskuje część (19%), bo sieć musi sama nauczyć się odejmować prawie równe liczby. Gdy prędkość da się zmierzyć, lepiej podać ją wprost.
+3. **Premia za próg nie pomogła.** Ważniejsza lekcja: ten sam model miał 56% na 50 epizodach i 65% na 200, więc porównania robię tylko tym samym sprawdzianem na 200 epizodach.
+4. **Polityka ze sprzężeniem zwrotnym jest odporna.** Zmiana długości o ±10%, tarcia ×0,5–2, siły silnika o ±30% i szum 2 cm mieszczą się w szumie oceny, zarówno dla SAC, jak i dla regulatora.
+5. **Domain randomization nie jest darmowe.** Stary model nie był kruchy, więc losowy świat dał tylko koszt: −8,5 pp za losową fizykę i kolejne −23 pp za szum w treningu. Najpierw mierzę odporność, a zakres losowania dobieram do zmierzonej różnicy między symulacją a rzeczywistością (np. enkoder serwa STS3215 ma ok. 0,8 mm rozdzielczości na końcówce, a nie 2 cm).
+6. **Kiedy RL, a kiedy klasyczne sterowanie.** Tu wygrywa regulator, bo model ramienia jest znany i prosty. RL ma sens tam, gdzie takiego modelu nie da się napisać: kontakt, miękkie materiały, sterowanie z obrazu.
+
+### Ograniczenia
+
+- Jeden seed treningu na wariant; różnice poniżej ok. 7 pp traktuję jako szum.
+- Symulator jest łagodny: wektor końcówka→cel liczy się z prawdziwych długości ramienia. Na robocie liczy się go z modelu albo z kamery, więc błąd długości byłby też błędem obserwacji.
+
+### Jak odtworzyć
+
+```powershell
+uv sync
+uv run pytest
+uv run python experiments/week09/robustness.py runs/week08/sac_arm_cossin_vel1_50000_seed0
+uv run python experiments/week09/robustness.py --hand
+uv run python experiments/week09/plot_robustness.py
+```

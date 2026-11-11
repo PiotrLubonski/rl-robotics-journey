@@ -6,6 +6,7 @@ from pathlib import Path
 
 from stable_baselines3 import SAC
 
+from rl_journey.baselines import JacobianController
 from rl_journey.eval import evaluate_arm
 from rl_journey.wrappers import ObsNoise, RandomizePhysics
 
@@ -27,15 +28,21 @@ SCENARIOS = {
 RESULTS = Path("runs/week09/robustness.csv")
 
 parser = argparse.ArgumentParser()
-parser.add_argument("model", help="ścieżka do modelu (bez .zip)")
+parser.add_argument("model", nargs="?", help="ścieżka do modelu SAC (bez .zip)")
+parser.add_argument(
+    "--hand", action="store_true", help="oceń ręczny regulator zamiast modelu"
+)
 parser.add_argument("--episodes", type=int, default=200)
 args = parser.parse_args()
 
-model = SAC.load(args.model, device="cpu")
-name = Path(args.model).name
+if args.hand:
+    model, name = JacobianController(), "reczny_regulator"
+else:
+    model, name = SAC.load(args.model, device="cpu"), Path(args.model).name
 print(f"model: {name}")
 print(
-    f"{'scenariusz':16s} {'sukces':>7s} {'nie domk.':>10s} {'nie traf.':>10s} {'koniec':>8s}"
+    f"{'scenariusz':16s} {'sukces':>7s} {'nie domk.':>10s} {'nie traf.':>10s} "
+    f"{'koniec':>8s} {'kraniec (n)':>13s}"
 )
 rows = []
 for scenario, wrapper in SCENARIOS.items():
@@ -43,7 +50,7 @@ for scenario, wrapper in SCENARIOS.items():
     rows.append({"model": name, "scenariusz": scenario, **r})
     print(
         f"{scenario:16s} {r['success_pct']:6.1f}% {r['not_closed_pct']:9.1f}% "
-        f"{r['missed_pct']:9.1f}% {r['end_cm']:5.1f} cm"
+        f"{r['missed_pct']:9.1f}% {r['end_cm']:5.1f} cm {r['edge_success_pct']:6.1f}% ({r['edge_n']})"
     )
 
 RESULTS.parent.mkdir(parents=True, exist_ok=True)
