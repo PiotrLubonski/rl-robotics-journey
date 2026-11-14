@@ -1,7 +1,8 @@
 import numpy as np
 import pytest
 
-from rl_journey.eval import evaluate_arm
+from rl_journey.envs.so101_reach import SO101Reach
+from rl_journey.eval import evaluate_arm, evaluate_env
 from rl_journey.wrappers import StackObs
 
 
@@ -42,3 +43,17 @@ def test_ocena_przekazuje_opakowanie():
         episodes=3,
         wrapper=lambda e: StackObs(e, n=2),
     )
+
+
+class NicNieRobi5:
+    """Atrapa modelu dla SO-101: zawsze akcja zero (5 stawów)."""
+
+    def predict(self, obs, deterministic=True):
+        return np.zeros(5, dtype=np.float32), None
+
+
+def test_ocena_so101_nic_nie_robi():
+    wynik = evaluate_env(NicNieRobi5(), SO101Reach(), episodes=5)
+    assert wynik["success_pct"] == 0.0
+    suma = wynik["success_pct"] + wynik["not_closed_pct"] + wynik["missed_pct"]
+    assert suma == pytest.approx(100.0, abs=0.2)
