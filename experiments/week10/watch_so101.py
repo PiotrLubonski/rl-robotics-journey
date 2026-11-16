@@ -1,4 +1,4 @@
-"""Tydzień 10: podgląd wytrenowanej polityki na SO101Reach w oknie MuJoCo."""
+"""Tydzień 10: podgląd polityki (SAC albo ręcznego regulatora) na SO101Reach w oknie MuJoCo."""
 
 import argparse
 import time
@@ -8,15 +8,19 @@ import mujoco.viewer
 import numpy as np
 from stable_baselines3 import SAC
 
+from rl_journey.baselines import SO101JacobianController
 from rl_journey.envs.so101_reach import SO101Reach
 
 parser = argparse.ArgumentParser()
-parser.add_argument("model", help="ścieżka do modelu (bez .zip)")
+parser.add_argument("model", nargs="?", help="ścieżka do modelu SAC (bez .zip)")
+parser.add_argument(
+    "--hand", action="store_true", help="pokaż ręczny regulator zamiast SAC"
+)
 parser.add_argument("--episodes", type=int, default=8)
 parser.add_argument("--seed", type=int, default=1000)
 args = parser.parse_args()
 
-model = SAC.load(args.model, device="cpu")
+model = SO101JacobianController() if args.hand else SAC.load(args.model, device="cpu")
 env = SO101Reach()
 
 with mujoco.viewer.launch_passive(env.model, env.data) as viewer:
