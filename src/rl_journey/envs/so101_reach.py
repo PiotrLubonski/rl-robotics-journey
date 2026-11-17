@@ -63,13 +63,13 @@ class SO101Reach(gym.Env):
         lo = self.model.jnt_range[self.joint_ids, 0]
         hi = self.model.jnt_range[self.joint_ids, 1]
         for _ in range(1000):
-            self.fk_data.qpos[self.qpos_adr] = self.np_random.uniform(
-                0.8 * lo, 0.8 * hi
-            )
+            q = self.np_random.uniform(0.8 * lo, 0.8 * hi)
+            self.fk_data.qpos[self.qpos_adr] = q
             mujoco.mj_kinematics(self.model, self.fk_data)
             p = self.fk_data.site_xpos[self.tip_id]
             radius = np.linalg.norm(p[:2] - self.base_xy)
             if 0.02 <= p[2] <= 0.30 and 0.12 <= radius <= 0.38:
+                self.goal_q = q  # kąty pozy, z której pochodzi cel
                 return p.copy()
         raise RuntimeError("nie udało się wylosować celu")
 

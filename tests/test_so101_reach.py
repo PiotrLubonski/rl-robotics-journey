@@ -1,3 +1,4 @@
+import mujoco
 import numpy as np
 import pytest
 from gymnasium.utils.env_checker import check_env
@@ -55,3 +56,11 @@ def test_bez_akcji_nagroda_to_minus_odleglosc():
     env.reset(seed=0)
     _, reward, _, _, info = env.step(np.zeros(5))
     assert reward == pytest.approx(-info["distance"])
+
+
+def test_cel_pochodzi_z_pozy_goal_q():
+    env = SO101Reach()
+    env.reset(seed=3)
+    env.fk_data.qpos[env.qpos_adr] = env.goal_q
+    mujoco.mj_kinematics(env.model, env.fk_data)
+    assert np.allclose(env.fk_data.site_xpos[env.tip_id], env.goal, atol=1e-9)
